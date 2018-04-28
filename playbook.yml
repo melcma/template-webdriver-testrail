@@ -1,0 +1,40 @@
+---
+- hosts: webdriver
+
+  tasks:
+    - name: Add Java repository
+      become: true
+      apt_repository:
+        repo: ppa:webupd8team/java
+        state: present
+
+    - name: Set Oracle licence selected
+      shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+      become: true
+
+    - name: Set Oracle licence seen
+      shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
+      become: true
+
+    - name: Install Java 8
+      become: true
+      apt:
+        name: oracle-java8-installer
+
+    - name: Install headless display server xvfb
+      become: true
+      apt:
+        name: xvfb
+
+    - name: Install Firefox
+      become: true
+      apt:
+        name: firefox
+
+    - name: Install NPM global packages
+      become: true
+      npm:
+        name: "{{ item }}"
+        global: yes
+      with_items:
+        - selenium-standalone
